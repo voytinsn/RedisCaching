@@ -15,9 +15,7 @@ const itemsEndpoint = "/v1/items";
  * @param tradable
  * @returns
  */
-export async function getItems(
-  tradable = false,
-): Promise<UpcomingItem[]> {
+export async function getItems(tradable = false): Promise<UpcomingItem[]> {
   const response = await axiosClient.get(itemsEndpoint, {
     params: { tradable },
   });
