@@ -3,12 +3,14 @@ name: exmaple_app
 services:
   redis:
     restart: no
-    image: redis
+    image: redis:7
     ports:
       - 127.0.0.1:${REDIS_PORT}:6379
 
   db:
-    image: postgres
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
     restart: no
     shm_size: 128mb
     environment:
@@ -27,7 +29,7 @@ services:
 
   # Не требуется для работы, нужен только для наглядного просмотра содержимого Postgres
   adminer:
-    image: adminer
+    image: adminer:latest
     restart: no
     ports:
       - 127.0.0.1:8084:8080

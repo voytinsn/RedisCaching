@@ -1,0 +1,14 @@
+### Коллекция запросов для расширения VS Code REST Client
+### https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+### Получение списка товаров
+GET http://127.0.0.1:3001/items
+
+### Покупка товара
+POST http://127.0.0.1:3001/items/buy
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImUuYm9iIiwiaWF0IjoxNzI4NDcxNDk3fQ.4ll3buurZFPzqj7YrCQ91vkO7jID8DTcWVzIfn0iOzk
+Content-Type: application/json
+
+{
+    "market_hash_name": "1st Lieutenant Farlow | SWAT"
+}

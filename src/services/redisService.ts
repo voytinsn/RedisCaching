@@ -1,7 +1,7 @@
 import { createClient } from "redis";
 import type { Item, ItemFlat } from "../types";
 import { flatItemToItem, itemToFlatMap } from "../helper";
-import { itemFlatZod } from "../itemZod";
+import { itemFlatZod } from "../zodSchemas";
 import { z } from "zod";
 
 const client = createClient({
@@ -42,8 +42,25 @@ async function getItems(): Promise<Item[]> {
   return items;
 }
 
+/**
+ * Получает из Redis данные о товаре по его хэшу
+ */
+async function getItemByHash(hash: string): Promise<Item | null> {
+  console.log("Получение данных о товаре из Redis, hash:", hash);
+  const data = await client.hGetAll(`item__${hash}`);
+  try {
+    const itemFlat = itemFlatZod.parse(data);
+    const item = flatItemToItem(itemFlat);
+    return item;
+  } catch {
+    console.log("Данные о товаре не найдены в Redis");
+    return null;
+  }
+}
+
 export const redisService = {
   client,
   getItems,
+  getItemByHash,
   setItems,
 };

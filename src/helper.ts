@@ -141,10 +141,20 @@ export function flatItemToItem(itemFlat: ItemFlat): Item {
 /**
  * Получает данные о товарах из каталога и сохраняет их в Redis
  */
-export async function updateCache(): Promise<void> {
+export async function updateCache(): Promise<Item[]> {
   console.log("Обновление кэша");
-  const tradable = await catalogService.getItems(true);
-  const nonTradable = await catalogService.getItems(false);
-  const items = unionTradableNonTradable(tradable, nonTradable);
+  const items = await catalogService.getItemsWithPrices();
   await redisService.setItems(items);
+  return items;
+}
+
+/**
+ * Конвертирует float значение суммы в int,
+ * используется как перевод евро в центы.
+ *
+ * Просто умножать на 100 нельзя, например
+ * 1.15 * 100 = 114.99999999999999
+ */
+export function toCents(amount: number) {
+  return Math.round((Math.abs(amount) / 100) * 10000);
 }

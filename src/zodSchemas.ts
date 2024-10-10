@@ -41,3 +41,11 @@ export const itemFlatZod = z.object({
   non_tradable_created_at: z.coerce.number(),
   non_tradable_updated_at: z.coerce.number().nullish(),
 });
+
+export const jwtPayloadZod = z.object({
+  login: z.string().min(1)
+})
+
+export const buyItemPostZod = z.object({
+  market_hash_name: z.string().min(1)
+})
