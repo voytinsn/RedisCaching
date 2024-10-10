@@ -19,6 +19,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - 127.0.0.1:${POSTGRES_PORT}:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
   # Не требуется для работы, нужен только для наглядного просмотра содержимого Redis
   redisinsight:
@@ -33,3 +35,6 @@ services:
     restart: no
     ports:
       - 127.0.0.1:8084:8080
+
+volumes:
+  pg_data:

@@ -25,25 +25,28 @@ async function main() {
   console.log("Подключение к Redis");
   await redisService.client.connect();
 
-    console.log("Очистка хранилища Redis перед началом работы");
-    await redisService.client.flushDb();
+  console.log("Очистка хранилища Redis перед началом работы");
+  await redisService.client.flushDb();
 
-    console.log("Кэширование данные о товарах");
-    const items = await catalogService.getItemsWithPrices();
-    await redisService.setItems(items);
+  console.log("Кэширование данные о товарах");
+  const items = await catalogService.getItemsWithPrices();
+  await redisService.setItems(items);
 
-    console.log("Создание или обновление записей о товарах в БД");
-    await itemModel.upsertMany(items);
+  console.log("Создание или обновление записей о товарах в БД");
+  await itemModel.upsertMany(items);
 
-    // Кэш обновляется каждые 5 минут
-    setInterval(() => {
+  // Кэш обновляется каждые 5 минут
+  setInterval(
+    () => {
       try {
         updateCache();
       } catch (e) {
         if (e instanceof Error)
           console.log("Ошибка при обновлении кэша", e.message);
       }
-    }, 1000 * 60 * 5);
+    },
+    1000 * 60 * 5,
+  );
 
   const app = express();
   app.use(express.json());
@@ -106,33 +109,36 @@ async function main() {
         return next();
       }
 
-      // Покупка
-      const purchase: Purchase = {
-        user_id: user.id,
-        item_id: item.id,
-        price: centPrice,
-        currency: cacheItem.currency,
-      };
-      await purchaseModel.insert(purchase);
+      // Создание записи о покупке и уменьшение баланса
+      // выполняются одной транзакцией
+      try {
+        await postgresService.beginTransaction();
 
-      // Уменьшение баланса
-      userModel.reduceBalance(user.id, centPrice);
+        // Покупка
+        const purchase: Purchase = {
+          user_id: user.id,
+          item_id: item.id,
+          price: centPrice,
+          currency: cacheItem.currency,
+        };
+        await purchaseModel.insert(purchase);
 
-      res.json({
-        success: true,
-      });
+        // Уменьшение баланса
+        const dbUser = await userModel.reduceBalance(user.id, centPrice);
+
+        await postgresService.commitTransaction();
+
+        res.json({
+          success: true,
+          balance: dbUser.balance / 100,
+        });
+      } catch (e) {
+        await postgresService.rollbackTransaction();
+        throw e;
+      }
     } catch (e) {
       next(e);
     }
-    // декодировать jwt
-    // отбрыкнуть если json отсуствует
-    // найти пользователя
-    // найти товар
-    // отбрыкнуть если что-то не нашлось
-    // создать запись о продаже
-    // уменьшить баланс
-    // не забыть про копейки
-    // сделать транзакцию
   });
 
   app.use(errorHandler);

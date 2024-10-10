@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const configuration: Configuration = {
   host: process.env.POSTGRES_HOST,
-  port: z.number().parse(process.env.POSTGRES_PORT),
+  port: z.coerce.number().parse(process.env.POSTGRES_PORT),
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
@@ -44,8 +44,32 @@ async function executeNonQuery(
   await client.query(query, values);
 }
 
+/**
+ * Начинает транзакцию
+ */
+async function beginTransaction(): Promise<void> {
+  await client.query("BEGIN");
+}
+
+/**
+ * Завершает транзакцию
+ */
+async function commitTransaction(): Promise<void> {
+  await client.query("COMMIT");
+}
+
+/**
+ * Откатывает транзакцию
+ */
+async function rollbackTransaction() {
+  await client.query("ROLLBACK");
+}
+
 export const postgresService = {
   connectToDb,
   executeQuery,
   executeNonQuery,
+  beginTransaction,
+  commitTransaction,
+  rollbackTransaction,
 };
