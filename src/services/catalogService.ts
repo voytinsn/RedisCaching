@@ -4,8 +4,6 @@ import { z } from "zod";
 import { upcomingItemZod } from "../zodSchemas";
 import { unionTradableNonTradable } from "../helper";
 
-console.log("process.env.UPCOMING_API_URL", process.env.UPCOMING_API_URL);
-
 const axiosClient = axios.create({
   baseURL: process.env.UPCOMING_API_URL,
 });
