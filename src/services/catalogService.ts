@@ -15,7 +15,7 @@ const itemsEndpoint = "/v1/items";
 /**
  * Получает список товаров из каталога
  */
-async function getItems(tradable: boolean = false): Promise<UpcomingItem[]> {
+async function getItems(tradable = false): Promise<UpcomingItem[]> {
   console.log("Получение товаров. tradable =", tradable);
   const response = await axiosClient.get(itemsEndpoint, {
     params: { tradable },
@@ -40,5 +40,5 @@ async function getItemsWithPrices(): Promise<Item[]> {
 
 export const catalogService = {
   getItems,
-  getItemsWithPrices
+  getItemsWithPrices,
 };

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import { redisService } from "./services/redisService";
 import { toCents, updateCache } from "./helper";
 import { catalogService } from "./services/catalogService";
@@ -13,7 +13,7 @@ import { buyItemPostZod } from "./zodSchemas";
 import { userModel } from "./models/userModel";
 import { HttpStatusCode } from "axios";
 import { purchaseModel } from "./models/purchaseModel";
-import { Purchase } from "./types";
+import type { Purchase } from "./types";
 
 dotenv.config();
 const expressPort = process.env.PORT;
@@ -25,25 +25,25 @@ async function main() {
   console.log("Подключение к Redis");
   await redisService.client.connect();
 
-  //   console.log("Очистка хранилища Redis перед началом работы");
-  //   await redisService.client.flushDb();
+    console.log("Очистка хранилища Redis перед началом работы");
+    await redisService.client.flushDb();
 
-  //   console.log("Кэширование данные о товарах");
-  //   const items = await catalogService.getItemsWithPrices();
-  //   await redisService.setItems(items);
+    console.log("Кэширование данные о товарах");
+    const items = await catalogService.getItemsWithPrices();
+    await redisService.setItems(items);
 
-  //   console.log("Создание или обновление записей о товарах в БД");
-  //   await itemModel.upsertMany(items);
+    console.log("Создание или обновление записей о товарах в БД");
+    await itemModel.upsertMany(items);
 
-  //   // Кэш обновляется каждые 5 минут
-  //   setInterval(() => {
-  //     try {
-  //       updateCache;
-  //     } catch (e) {
-  //       if (e instanceof Error)
-  //         console.log("Ошибка при обновлении кэша", e.message);
-  //     }
-  //   }, 1000 * 60 * 1);
+    // Кэш обновляется каждые 5 минут
+    setInterval(() => {
+      try {
+        updateCache();
+      } catch (e) {
+        if (e instanceof Error)
+          console.log("Ошибка при обновлении кэша", e.message);
+      }
+    }, 1000 * 60 * 5);
 
   const app = express();
   app.use(express.json());
@@ -94,7 +94,7 @@ async function main() {
       }
 
       // Перевод цены в центы
-      const centPrice = toCents(cacheItem.tradable.suggested_price)
+      const centPrice = toCents(cacheItem.tradable.suggested_price);
 
       // Проверка баланса
       if (user.balance < centPrice) {

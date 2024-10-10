@@ -1,13 +1,13 @@
 import { catalogService } from "./services/catalogService";
 import { redisService } from "./services/redisService";
-import { Item, ItemFlat, UpcomingItem } from "./types";
+import type { Item, ItemFlat, UpcomingItem } from "./types";
 
 /**
  * Сливает массивы tradable и nonTradable товаров
  */
 export function unionTradableNonTradable(
   tradable: UpcomingItem[],
-  nonTradable: UpcomingItem[]
+  nonTradable: UpcomingItem[],
 ): Item[] {
   console.log("Слияние массивов tradable и nonTradable");
 
@@ -86,7 +86,7 @@ export function itemToFlatMap(item: Item): Map<string, string | number> {
   if (item.non_tradable.suggested_price)
     resultMap.set(
       "non_tradable_suggested_price",
-      item.non_tradable.suggested_price
+      item.non_tradable.suggested_price,
     );
 
   if (item.non_tradable.min_price)

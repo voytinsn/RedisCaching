@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import jsonwebtoken, { JsonWebTokenError } from "jsonwebtoken";
 import { HttpStatusCode } from "axios";
 import { jwtPayloadZod } from "../zodSchemas";
+import { z } from "zod";
 
 /**
  * Проверяет авторизацию по JWT
@@ -18,7 +19,10 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const decodedJwt = jsonwebtoken.verify(token, process.env.JWT_SECRET!);
+    const decodedJwt = jsonwebtoken.verify(
+      token,
+      z.string().parse(process.env.JWT_SECRET),
+    );
     const payload = jwtPayloadZod.parse(decodedJwt);
     req.app.set("login", payload.login);
     next();

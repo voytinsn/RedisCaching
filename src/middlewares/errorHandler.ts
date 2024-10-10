@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import { HttpStatusCode } from "axios";
 
 /**
@@ -8,7 +8,7 @@ export function errorHandler(
   err: unknown,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ) {
   if (res.statusCode === 200) res.status(HttpStatusCode.InternalServerError);
 

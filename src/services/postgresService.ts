@@ -1,8 +1,10 @@
-import { Client, Configuration, connect, ResultRecord } from "ts-postgres";
+import type { Client, Configuration, ResultRecord } from "ts-postgres";
+import { connect } from "ts-postgres";
+import { z } from "zod";
 
 const configuration: Configuration = {
   host: process.env.POSTGRES_HOST,
-  port: parseInt(process.env.POSTGRES_PORT!),
+  port: z.number().parse(process.env.POSTGRES_PORT),
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
@@ -20,10 +22,10 @@ async function connectToDb() {
  */
 async function executeQuery<T = ResultRecord>(
   query: string,
-  values?: any[]
+  values?: (string | number)[],
 ): Promise<T[]> {
   const result = await client.query<T>(query, values);
-  let rows: Array<T> = [];
+  const rows: T[] = [];
 
   for (const obj of result) {
     rows.push(obj);
@@ -35,7 +37,10 @@ async function executeQuery<T = ResultRecord>(
 /**
  * Выполняет запрос без возвращения результата
  */
-async function executeNonQuery(query: string, values?: any[]): Promise<void> {
+async function executeNonQuery(
+  query: string,
+  values?: (string | number)[],
+): Promise<void> {
   await client.query(query, values);
 }
 

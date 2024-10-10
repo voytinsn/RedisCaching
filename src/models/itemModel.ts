@@ -1,5 +1,5 @@
 import { postgresService } from "../services/postgresService";
-import { DbItem, Item } from "../types";
+import type { DbItem, Item } from "../types";
 
 const tableName = "items";
 
@@ -9,7 +9,7 @@ const tableName = "items";
 async function insert(item: Item): Promise<number> {
   console.log(`Добавление в БД товара ${item.market_hash_name}`);
 
-  const query: string = `
+  const query = `
       INSERT INTO "${tableName}" ("market_hash_name", "item_page", "market_page")
       VALUES ($1, $2, $3)
       RETURNING id;
@@ -30,7 +30,7 @@ async function insert(item: Item): Promise<number> {
 async function update(id: number, item: Item): Promise<void> {
   console.log(`Обновление в БД информации о товаре ${item.market_hash_name}`);
 
-  const query: string = `
+  const query = `
         UPDATE ${tableName}
         SET market_hash_name = $1, item_page = $2, market_page = $3
         WHERE id = ${id};
@@ -49,7 +49,7 @@ async function update(id: number, item: Item): Promise<void> {
 async function getByName(name: string): Promise<DbItem | null> {
   console.log(`Поиск в БД товара ${name}`);
 
-  const query: string = `
+  const query = `
     select *
     from ${tableName}
     where market_hash_name = $1
@@ -90,8 +90,8 @@ async function upsert(item: Item): Promise<number> {
 async function upsertMany(items: Item[]): Promise<void> {
   await Promise.all(
     items.map(async (item) => {
-        await upsert(item);
-    })
+      await upsert(item);
+    }),
   );
 }
 

@@ -1,5 +1,5 @@
 import { postgresService } from "../services/postgresService";
-import { User } from "../types";
+import type { User } from "../types";
 
 const tableName = "users";
 
@@ -9,7 +9,7 @@ const tableName = "users";
 async function getByLogin(login: string): Promise<User | null> {
   console.log(`Поиск в БД пользователя ${login}`);
 
-  const query: string = `
+  const query = `
     select *
     from ${tableName}
     where login = $1
@@ -34,7 +34,7 @@ async function getByLogin(login: string): Promise<User | null> {
 async function reduceBalance(id: number, amount: number): Promise<void> {
   console.log(`Уменьшение баланса пользователя с id ${id} на ${amount}`);
 
-  const query: string = `
+  const query = `
         UPDATE ${tableName}
         SET balance = balance - $1
         WHERE id = ${id};

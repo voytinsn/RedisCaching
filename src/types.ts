@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { itemFlatZod, jwtPayloadZod, upcomingItemZod } from "./zodSchemas";
+import type { z } from "zod";
+import type { itemFlatZod, jwtPayloadZod, upcomingItemZod } from "./zodSchemas";
 
 /**
  * Товар, содержит данные о tradable и non_tradable вариантах

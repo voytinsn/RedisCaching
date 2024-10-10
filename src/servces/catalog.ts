@@ -1,5 +1,5 @@
 import axios from "axios";
-import { UpcomingItem } from "../types";
+import type { UpcomingItem } from "../types";
 import { z } from "zod";
 import { upcomingItemZod } from "../zodSchemas";
 
@@ -16,7 +16,7 @@ const itemsEndpoint = "/v1/items";
  * @returns
  */
 export async function getItems(
-  tradable: boolean = false
+  tradable = false,
 ): Promise<UpcomingItem[]> {
   const response = await axiosClient.get(itemsEndpoint, {
     params: { tradable },

@@ -20,7 +20,7 @@ async function setItems(items: Item[]): Promise<void> {
     items.map(async (item) => {
       const itemFlat: Map<string, string | number> = itemToFlatMap(item);
       await client.hSet(`item__${item.market_hash_name}`, itemFlat);
-    })
+    }),
   );
 }
 
@@ -33,7 +33,7 @@ async function getItems(): Promise<Item[]> {
   const values = (await Promise.all(
     keys.map(async (key) => {
       return client.hGetAll(key);
-    })
+    }),
   )) as unknown[];
 
   const itemsFlat: ItemFlat[] = z.array(itemFlatZod).parse(values);

@@ -17,7 +17,6 @@ export const upcomingItemZod = z.object({
   updated_at: z.number().nullable(),
 });
 
-
 /**
  * Схема товара в Redis
  */
@@ -43,9 +42,9 @@ export const itemFlatZod = z.object({
 });
 
 export const jwtPayloadZod = z.object({
-  login: z.string().min(1)
-})
+  login: z.string().min(1),
+});
 
 export const buyItemPostZod = z.object({
-  market_hash_name: z.string().min(1)
-})
+  market_hash_name: z.string().min(1),
+});
